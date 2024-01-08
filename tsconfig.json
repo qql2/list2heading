@@ -5,7 +5,8 @@
             "es6",
             "dom"
         ],
-        "module": "commonjs",
+        "moduleResolution": "NodeNext",
+        "module": "NodeNext",
         "declaration": true,
         "emitDeclarationOnly": true,
         "outFile": "./main.js",
@@ -15,6 +16,6 @@
         "skipLibCheck": true
     },
     "include": [
-        "src/packageName.ts"
+        "src/list2heading.ts"
     ]
 }

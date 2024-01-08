@@ -1,16 +1,31 @@
 {
-  "name": "",
+  "name": "list2heading",
   "version": "1.0.0",
-  "description": "",
+  "description": "Convert list to heading in MarkDown.",
   "main": "main.js",
   "scripts": {
-  	"dev": "node esbuild.config.mjs",
-  	"build": "tsc -skipLibCheck && node esbuild.config.mjs production",
-  	"pub": "npm run build & npm publish"
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -skipLibCheck && node esbuild.config.mjs production",
+    "pub": "npm run build & npm publish"
   },
   "author": "qql2",
   "types": "main.d.ts",
   "dependencies": {
-    "esbuild": "latest"
+    "esbuild": "latest",
+    "jsdom": "^23.1.0",
+    "rehype-parse": "^9.0.0",
+    "rehype-remark": "^10.0.0",
+    "rehype-sanitize": "^6.0.0",
+    "rehype-stringify": "^10.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.4",
+    "unist-util-visit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.6",
+    "@types/node": "^20.10.6",
+    "ts-node": "^10.9.2"
   }
 }
