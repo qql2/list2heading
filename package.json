@@ -1,6 +1,6 @@
 {
   "name": "list2heading",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert list to heading in MarkDown.",
   "main": "main.js",
   "scripts": {
