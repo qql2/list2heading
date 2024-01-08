@@ -10,7 +10,7 @@
   },
   "author": "qql2",
   "types": "main.d.ts",
-  "dependencies": {
+  "devDependencies": {
     "esbuild": "latest"
   }
 }
