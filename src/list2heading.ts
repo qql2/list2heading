@@ -129,12 +129,18 @@ export class MdListConverter {
 			let rst = ''
 			for (let i = 0; i < toReplaces.length; i++) {
 				let s2
-				if (i === 0) {
-					rst += str.slice(0, toReplaces[i].start)
-					s2 = str.slice(toReplaces[i].end + 1, toReplaces[i + 1].start)
-				} else if (i === toReplaces.length - 1) {
-					s2 = str.slice(toReplaces[i].end + 1)
-				} else {
+				const c1 = i === 0
+				const c2 = i === toReplaces.length - 1
+				if (c1 || c2) {
+					if (c1) {
+						rst += str.slice(0, toReplaces[i].start)
+						if (!c2) s2 = str.slice(toReplaces[i].end + 1, toReplaces[i + 1].start)
+					}
+					if (c2) {
+						s2 = str.slice(toReplaces[i].end + 1)
+					}
+				}
+				else {
 					s2 = str.slice(toReplaces[i].end + 1, toReplaces[i + 1].start)
 				}
 				rst += toReplaces[i].data
