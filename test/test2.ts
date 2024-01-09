@@ -66,24 +66,7 @@ async function htmlToMd(html: string) {
 	return md.toString()
 }
 async function test() {
-	const md = await readFile(join(__dirname, './md.md'), 'utf-8')
-
-	const unified = (await import('unified')).unified
-	const remarkParse = (await import('remark-parse')).default
-
-
-	// 读取文件
-	// const mdast = unified()
-	// 	.use(remarkParse, { gfm: true })
-	// 	.use(wikiLinkPlugin)
-	// 	.parse(md)
-	// const stringify = (await import('remark-stringify')).default
-
-	// const rst = unified()
-	// 	.use(stringify, { listItemIndent: "mixed", join: [() => 0], resourceLink: true, })
-	// 	.stringify(mdast)
-
-	// const rst = await htmlToMd(await parseMdInHtml(md))
+	const md = await readFile(join(__dirname, './md3.md'), 'utf-8')
 
 	const rst = listAndHeadingMdastStringify(await parseMdInAST(md))
 	await writeFile(join(__dirname, './rst.md'), rst)

@@ -1,3 +1,5 @@
+import * as mdast from 'mdast';
+
 import { Heading, List, ListItem, Paragraph, PhrasingContent, Root, Text } from 'mdast';
 import { readFile, writeFile } from 'fs/promises';
 
@@ -68,7 +70,7 @@ export class MdListConverter {
 			})
 		const stringify = (await import('remark-stringify')).default
 		const unified = (await import('unified')).unified
-		return unified().use(stringify, { listItemIndent: "mixed", join: [() => 0] }).stringify(newMd)
+		return this.listAndHeadingMdastStringify(newMd)
 	}
 	protected getListItemContent(listItem: ListItem): (Text | PhrasingContent)[] {
 		const rst = []
@@ -160,5 +162,58 @@ export class MdListConverter {
 			}
 		}))
 		return newMd
+	}
+	protected listAndHeadingMdastStringify(mdast: mdast.Root, intent = '  ') {
+		let rst = ''
+		/* 深度遍历 */
+		function createDfs(root: mdast.Root) {
+			const nodePath: mdast.Node[] = []
+			function dfs(node: mdast.Node) {
+				nodePath.push(node)
+				function blockHandler() {
+					for (const subNode of (node as mdast.Parent).children) {
+						dfs(subNode)
+					}
+				}
+				if (node.type === 'listItem') {
+					let count = 0
+					for (const parentN of nodePath) {
+						if (parentN.type === 'listItem') {
+							count++
+						}
+					}
+					rst += intent.repeat(count - 1) + '- '
+					blockHandler()
+				}
+				else if (node.type === 'heading') {
+					rst += '#'.repeat((node as mdast.Heading).depth) + ' '
+					blockHandler()
+				}
+				else if ('value' in node) {
+					rst += node.value
+					if (nodePath.length >= 2) {
+						const parentN = nodePath[nodePath.length - 2]
+						const children = (parentN as mdast.Parent).children
+						const index = children.indexOf(node as mdast.RootContent)
+						const nextN = children[index + 1]
+						if (nextN?.type === 'listItem' || nextN?.type === 'heading' || nextN?.type === 'list' || nextN?.type === undefined) {
+							rst += EOL
+						}
+					}
+				} else if ('children' in node) {
+					for (const subNode of node.children as mdast.Node[]) {
+						dfs(subNode)
+					}
+				} else {
+					throw new Error(`Unknown node type: ${node.type}`)
+				}
+				nodePath.pop()
+			}
+			return dfs
+		}
+
+		const dfs = createDfs(mdast)
+		dfs(mdast)
+		return rst
 	}
 }
