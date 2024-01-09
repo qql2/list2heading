@@ -1,8 +1,9 @@
+import { readFile, writeFile } from 'fs/promises';
+
 import { EOL } from 'os';
 import { MdListConverter } from '../src/list2heading';
 import { join } from 'path';
 import mdast from 'mdast';
-import { readFile } from 'fs/promises';
 
 export class MdListConverterTest extends MdListConverter {
 	protected constructor(markdown: string, tree: mdast.Root, public n: number) {
@@ -85,16 +86,18 @@ async function test() {
 	// const rst = await htmlToMd(await parseMdInHtml(md))
 
 	const rst = listAndHeadingMdastStringify(await parseMdInAST(md))
-	console.log(rst);
+	await writeFile(join(__dirname, './rst.md'), rst)
+
 }
 test()
 
-function listAndHeadingMdastStringify(mdast: mdast.Root) {
+function listAndHeadingMdastStringify(mdast: mdast.Root, intent = '  ') {
 	let rst = ''
 	/* 深度遍历 */
 	function createDfs(root: mdast.Root) {
-		let last
+		const nodePath: mdast.Node[] = []
 		function dfs(node: mdast.Node) {
+			nodePath.push(node)
 			function blockHandler() {
 				for (const subNode of (node as mdast.Parent).children) {
 					dfs(subNode)
@@ -102,6 +105,13 @@ function listAndHeadingMdastStringify(mdast: mdast.Root) {
 				}
 			}
 			if (node.type === 'listItem') {
+				let count = 0
+				for (const parentN of nodePath) {
+					if (parentN.type === 'listItem') {
+						count++
+					}
+				}
+				rst += intent.repeat(count - 1) + '- '
 				blockHandler()
 			}
 			else if (node.type === 'heading') {
@@ -110,12 +120,23 @@ function listAndHeadingMdastStringify(mdast: mdast.Root) {
 			}
 			else if ('value' in node) {
 				rst += node.value
+				// if (nodePath.length >= 2) {
+				// 	const parentN = nodePath[nodePath.length - 2]
+				// 	const children = (parentN as mdast.Parent).children
+				// 	const index = children.indexOf(node as mdast.RootContent)
+				// 	const nextN = children[index + 1]
+				// 	if (nextN?.type === 'listItem' || nextN?.type === 'heading' || nextN?.type === 'list') {
+				// 		rst += EOL
+				// 	}
+				// }
 			} else if ('children' in node) {
 				for (const subNode of node.children as mdast.Node[]) {
 					dfs(subNode)
 				}
+			} else {
+				throw new Error(`Unknown node type: ${node.type}`)
 			}
-			throw new Error(`Unknown node type: ${node.type}`)
+			nodePath.pop()
 		}
 		return dfs
 	}
