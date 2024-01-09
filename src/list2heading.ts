@@ -20,7 +20,8 @@ export class MdListConverter {
 	static async initConverter(markdown: string) {
 		return [markdown, await this.parseMd(markdown)] as const
 	}
-	async lists2heading(outPutOption: OUT_PUT_OPTION = { intent: '  ' }) {
+	async lists2heading(outPutOption?: OUT_PUT_OPTION) {
+		outPutOption = Object.assign({ intent: '  ' }, outPutOption)
 		const lists = this.findLists()
 		const newLists: string[] = []
 		for (const list of lists) {
