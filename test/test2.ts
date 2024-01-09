@@ -101,7 +101,6 @@ function listAndHeadingMdastStringify(mdast: mdast.Root, intent = '  ') {
 			function blockHandler() {
 				for (const subNode of (node as mdast.Parent).children) {
 					dfs(subNode)
-					rst += EOL
 				}
 			}
 			if (node.type === 'listItem') {
@@ -120,15 +119,15 @@ function listAndHeadingMdastStringify(mdast: mdast.Root, intent = '  ') {
 			}
 			else if ('value' in node) {
 				rst += node.value
-				// if (nodePath.length >= 2) {
-				// 	const parentN = nodePath[nodePath.length - 2]
-				// 	const children = (parentN as mdast.Parent).children
-				// 	const index = children.indexOf(node as mdast.RootContent)
-				// 	const nextN = children[index + 1]
-				// 	if (nextN?.type === 'listItem' || nextN?.type === 'heading' || nextN?.type === 'list') {
-				// 		rst += EOL
-				// 	}
-				// }
+				if (nodePath.length >= 2) {
+					const parentN = nodePath[nodePath.length - 2]
+					const children = (parentN as mdast.Parent).children
+					const index = children.indexOf(node as mdast.RootContent)
+					const nextN = children[index + 1]
+					if (nextN?.type === 'listItem' || nextN?.type === 'heading' || nextN?.type === 'list' || nextN?.type === undefined) {
+						rst += EOL
+					}
+				}
 			} else if ('children' in node) {
 				for (const subNode of node.children as mdast.Node[]) {
 					dfs(subNode)
