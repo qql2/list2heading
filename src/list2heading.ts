@@ -6,10 +6,13 @@ import { EOL } from 'os';
 const EOLRegex = /\r?\n|\r/g
 
 export class MdListConverter {
-	constructor(public markdown: string, private tree: Root) {
+	protected constructor(public markdown: string, protected tree: Root) {
 	}
 	static async createConverter(markdown: string) {
-		return new MdListConverter(markdown, await this.parseMd(markdown),)
+		return new MdListConverter(...await this.initConverter(markdown))
+	}
+	static async initConverter(markdown: string) {
+		return [markdown, await this.parseMd(markdown)] as const
 	}
 	async lists2heading() {
 		const lists = this.findLists()
@@ -22,7 +25,7 @@ export class MdListConverter {
 		const newMd = this.replaceList(lists, newLists)
 		return newMd
 	}
-	private static async parseMd(markdown: string) {
+	protected static async parseMd(markdown: string) {
 		const unified = (await import('unified')).unified
 
 

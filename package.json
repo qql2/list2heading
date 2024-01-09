@@ -20,6 +20,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.0.0",
     "remark-stringify": "^11.0.0",
+    "remark-wiki-link": "^2.0.1",
     "unified": "^11.0.4",
     "unist-util-visit": "^5.0.0"
   },
