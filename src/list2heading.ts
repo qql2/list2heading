@@ -7,6 +7,10 @@ import { EOL } from 'os';
 
 const EOLRegex = /\r?\n|\r/g
 
+export interface OUT_PUT_OPTION {
+	intent: string
+}
+
 export class MdListConverter {
 	protected constructor(public markdown: string, protected tree: Root) {
 	}
@@ -16,11 +20,11 @@ export class MdListConverter {
 	static async initConverter(markdown: string) {
 		return [markdown, await this.parseMd(markdown)] as const
 	}
-	async lists2heading() {
+	async lists2heading(outPutOption: OUT_PUT_OPTION = { intent: '  ' }) {
 		const lists = this.findLists()
 		const newLists: string[] = []
 		for (const list of lists) {
-			const newMd = await this.list2heading(list)
+			const newMd = await this.list2heading(list, outPutOption)
 			newLists.push(newMd)
 		}
 
@@ -43,7 +47,7 @@ export class MdListConverter {
 		const items = (this.tree).children.filter((node) => node.type === 'list') as List[]
 		return items
 	}
-	protected async list2heading(list: List) {
+	protected async list2heading(list: List, outPutOption: OUT_PUT_OPTION) {
 		const highestHeading = this.findHeadingLevel(list)
 		const newMd: Root = {
 			type: 'root',
@@ -68,9 +72,7 @@ export class MdListConverter {
 			, (list: List) => {
 				newMd.children.push(list)
 			})
-		const stringify = (await import('remark-stringify')).default
-		const unified = (await import('unified')).unified
-		return this.listAndHeadingMdastStringify(newMd)
+		return this.listAndHeadingMdastStringify(newMd, outPutOption)
 	}
 	protected getListItemContent(listItem: ListItem): (Text | PhrasingContent)[] {
 		const rst = []
@@ -163,7 +165,7 @@ export class MdListConverter {
 		}))
 		return newMd
 	}
-	protected listAndHeadingMdastStringify(mdast: mdast.Root, intent = '  ') {
+	protected listAndHeadingMdastStringify(mdast: mdast.Root, outPutOption: OUT_PUT_OPTION) {
 		let rst = ''
 		/* 深度遍历 */
 		function createDfs(root: mdast.Root) {
@@ -182,7 +184,7 @@ export class MdListConverter {
 							count++
 						}
 					}
-					rst += intent.repeat(count - 1) + '- '
+					rst += outPutOption.intent.repeat(count - 1) + '- '
 					blockHandler()
 				}
 				else if (node.type === 'heading') {
