@@ -169,7 +169,7 @@ export class MdListConverter {
 	protected listAndHeadingMdastStringify(mdast: mdast.Root, outPutOption: OUT_PUT_OPTION) {
 		let rst = ''
 		/* 深度遍历 */
-		function createDfs(root: mdast.Root) {
+		function createDfs() {
 			const nodePath: mdast.Node[] = []
 			function dfs(node: mdast.Node) {
 				nodePath.push(node)
@@ -192,6 +192,9 @@ export class MdListConverter {
 					rst += '#'.repeat((node as mdast.Heading).depth) + ' '
 					blockHandler()
 				}
+				else if (node.type === 'break') {
+					rst += EOL
+				}
 				else if ('value' in node) {
 					rst += node.value
 					if (nodePath.length >= 2) {
@@ -199,7 +202,7 @@ export class MdListConverter {
 						const children = (parentN as mdast.Parent).children
 						const index = children.indexOf(node as mdast.RootContent)
 						const nextN = children[index + 1]
-						if (nextN?.type === 'listItem' || nextN?.type === 'heading' || nextN?.type === 'list' || nextN?.type === undefined) {
+						if (nextN?.type === undefined || nextN?.type === 'listItem' || nextN?.type === 'heading' || nextN?.type === 'list') {
 							rst += EOL
 						}
 					}
@@ -215,7 +218,7 @@ export class MdListConverter {
 			return dfs
 		}
 
-		const dfs = createDfs(mdast)
+		const dfs = createDfs()
 		dfs(mdast)
 		return rst
 	}
