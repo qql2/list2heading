@@ -20,12 +20,12 @@ export class MdListConverter {
 	static async initConverter(markdown: string) {
 		return [markdown, await this.parseMd(markdown)] as const
 	}
-	async lists2heading(outPutOption?: OUT_PUT_OPTION) {
+	async lists2heading(ignoreLastList: boolean, outPutOption?: OUT_PUT_OPTION) {
 		outPutOption = Object.assign({ intent: '  ' }, outPutOption)
 		const lists = this.findLists()
 		const newLists: string[] = []
 		for (const list of lists) {
-			const newMd = await this.list2heading(list, outPutOption)
+			const newMd = await this.list2heading(list, outPutOption, ignoreLastList)
 			newLists.push(newMd)
 		}
 
@@ -48,26 +48,34 @@ export class MdListConverter {
 		const items = (this.tree).children.filter((node) => node.type === 'list') as List[]
 		return items
 	}
-	protected async list2heading(list: List, outPutOption: OUT_PUT_OPTION) {
+	protected async list2heading(list: List, outPutOption: OUT_PUT_OPTION, ignoreLastList: boolean) {
 		const highestHeading = this.findHeadingLevel(list)
 		const newMd: Root = {
 			type: 'root',
 			children: []
 		}
-		await this.visitList(list, highestHeading, (listItem: ListItem, headingL) => {
-			const newHeading: Heading = {
-				type: 'heading',
-				depth: headingL as 1 | 2 | 3 | 4 | 5 | 6,
-				children: [this.getListItemTitle(listItem)],
-			}
-			newMd.children.push(newHeading)
-			const listItemContent = this.getListItemContent(listItem)
-			if (listItemContent.length > 0) {
-				const contentBelowHeading: Paragraph = {
-					type: 'paragraph',
-					children: listItemContent
+		await this.visitList(list, highestHeading, (listItem: ListItem, headingL, haveSubList: boolean, listItems: ListItem[]) => {
+			if (ignoreLastList && !haveSubList) {
+				let newList: List = {
+					type: 'list',
+					children: [listItem]
 				}
-				newMd.children.push(contentBelowHeading)
+				newMd.children.push(newList)
+			} else {
+				const newHeading: Heading = {
+					type: 'heading',
+					depth: headingL as 1 | 2 | 3 | 4 | 5 | 6,
+					children: [this.getListItemTitle(listItem)],
+				}
+				newMd.children.push(newHeading)
+				const listItemContent = this.getListItemContent(listItem)
+				if (listItemContent.length > 0) {
+					const contentBelowHeading: Paragraph = {
+						type: 'paragraph',
+						children: listItemContent
+					}
+					newMd.children.push(contentBelowHeading)
+				}
 			}
 		}
 			, (list: List) => {
@@ -110,18 +118,18 @@ export class MdListConverter {
 		}
 		return headingL
 	}
-	protected async visitList(list: List, highestHeading: number, listItemHandler: (listItem: ListItem, level: number) => void, listHandler: (list: List) => void) {
-		const visit = (await import('unist-util-visit')).visit;
+	/** 遍历List中的每一个List，如果子List的headingLevel大于6的话，则用listHandler 处理该List，否则使用ListItemHandler处理该List下所有ListItem的集合 */
+	protected async visitList(list: List, highestHeading: number, listItemsHandler: (listItem: ListItem, level: number, haveSubList: boolean, listItems: ListItem[]) => void, listHandler: (list: List) => void) {
 		function _listVisitor(list: List, level: number) {
 			const headingL = level + highestHeading
 			if (headingL <= 6) {
-				/* 需要转换为标题 */
 				for (const listItem of list.children) {
-					listItemHandler(listItem, headingL)
-					for (const i of listItem.children) {
-						if (i.type === 'list') {
-							_listVisitor(i, level + 1)
-						}
+					let subList = listItem.children.find((node) => node.type === 'list') as List
+					if (subList) {
+						listItemsHandler(listItem, headingL, true, list.children)
+						_listVisitor(subList, level + 1)
+					} else {
+						listItemsHandler(listItem, headingL, false, list.children)
 					}
 				}
 			} else {

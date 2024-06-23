@@ -1,0 +1,198 @@
+[
+	{
+		"type": "list",
+		"ordered": false,
+		"start": null,
+		"spread": false,
+		"children": [
+			{
+				"type": "listItem",
+				"spread": false,
+				"checked": null,
+				"children": [
+					{
+						"type": "paragraph",
+						"children": [
+							{
+								"type": "text",
+								"value": "使用npx运行一个仿[[npm link]]的小工具，解决了很多npm link的痛点问题",
+								"position": {
+									"start": {
+										"line": 1,
+										"column": 3,
+										"offset": 2
+									},
+									"end": {
+										"line": 1,
+										"column": 48,
+										"offset": 47
+									}
+								}
+							}
+						],
+						"position": {
+							"start": {
+								"line": 1,
+								"column": 3,
+								"offset": 2
+							},
+							"end": {
+								"line": 1,
+								"column": 48,
+								"offset": 47
+							}
+						}
+					},
+					{
+						"type": "list",
+						"ordered": false,
+						"start": null,
+						"spread": false,
+						"children": [
+							{
+								"type": "listItem",
+								"spread": false,
+								"checked": null,
+								"children": [
+									{
+										"type": "paragraph",
+										"children": [
+											{
+												"type": "text",
+												"value": "如链接新的本地npm包的时候，不会清理之前已经链接的别的npm包",
+												"position": {
+													"start": {
+														"line": 2,
+														"column": 5,
+														"offset": 53
+													},
+													"end": {
+														"line": 2,
+														"column": 37,
+														"offset": 85
+													}
+												}
+											}
+										],
+										"position": {
+											"start": {
+												"line": 2,
+												"column": 5,
+												"offset": 53
+											},
+											"end": {
+												"line": 2,
+												"column": 37,
+												"offset": 85
+											}
+										}
+									}
+								],
+								"position": {
+									"start": {
+										"line": 2,
+										"column": 3,
+										"offset": 51
+									},
+									"end": {
+										"line": 2,
+										"column": 37,
+										"offset": 85
+									}
+								}
+							}
+						],
+						"position": {
+							"start": {
+								"line": 2,
+								"column": 3,
+								"offset": 51
+							},
+							"end": {
+								"line": 2,
+								"column": 37,
+								"offset": 85
+							}
+						}
+					}
+				],
+				"position": {
+					"start": {
+						"line": 1,
+						"column": 1,
+						"offset": 0
+					},
+					"end": {
+						"line": 2,
+						"column": 37,
+						"offset": 85
+					}
+				}
+			},
+			{
+				"type": "listItem",
+				"spread": false,
+				"checked": null,
+				"children": [
+					{
+						"type": "paragraph",
+						"children": [
+							{
+								"type": "text",
+								"value": "用法和[[npm link]]完全一致",
+								"position": {
+									"start": {
+										"line": 3,
+										"column": 3,
+										"offset": 89
+									},
+									"end": {
+										"line": 3,
+										"column": 22,
+										"offset": 108
+									}
+								}
+							}
+						],
+						"position": {
+							"start": {
+								"line": 3,
+								"column": 3,
+								"offset": 89
+							},
+							"end": {
+								"line": 3,
+								"column": 22,
+								"offset": 108
+							}
+						}
+					}
+				],
+				"position": {
+					"start": {
+						"line": 3,
+						"column": 1,
+						"offset": 87
+					},
+					"end": {
+						"line": 3,
+						"column": 22,
+						"offset": 108
+					}
+				}
+			}
+		],
+		"position": {
+			"start": {
+				"line": 1,
+				"column": 1,
+				"offset": 0
+			},
+			"end": {
+				"line": 3,
+				"column": 22,
+				"offset": 108
+			}
+		}
+	}
+]
